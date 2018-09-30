@@ -105,3 +105,6 @@ venv.bak/
 
 # Other files
 *~
+
+# PyCharm
+.idea/

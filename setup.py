@@ -1,12 +1,11 @@
 import io
 import os
 import sys
+
+import torch
 import torch
 from setuptools import setup, find_packages
-
 from torch.utils.cpp_extension import BuildExtension, CppExtension, CUDAExtension
-
-import torch
 
 extra_compile_args = {
     "cxx": ["-std=c++11", "-O3", "-fopenmp"],
@@ -15,16 +14,15 @@ extra_compile_args = {
 
 CC = os.getenv("CC", None)
 if CC is not None:
-        extra_compile_args["nvcc"].append("-ccbin=" + CC)
+    extra_compile_args["nvcc"].append("-ccbin=" + CC)
 
 include_dirs = [
     "{}/third-party/warp-ctc/include".format(
-        os.path.dirname(os.path.realpath(__file__)))
+        os.path.dirname(os.path.realpath(__file__))
+    )
 ]
 
-sources = [
-    "src/binding.cc",
-]
+sources = ["src/binding.cc"]
 
 if torch.cuda.is_available():
     sources += [
@@ -34,9 +32,7 @@ if torch.cuda.is_available():
 
     Extension = CUDAExtension
 else:
-    sources += [
-        "third-party/warp-ctc/src/ctc_entrypoint.cpp",
-    ]
+    sources += ["third-party/warp-ctc/src/ctc_entrypoint.cpp"]
 
     Extension = CppExtension
 
@@ -44,7 +40,7 @@ else:
 setup(
     name="torch-baidu-ctc",
     version="0.1",
-    description="PyTorch binding for Baidu Warp-CTC",
+    description="PyTorch bindings for Baidu Warp-CTC",
     long_description=io.open("README.md", "r").read(),
     long_description_content_type="text/markdown",
     url="https://github.com/jpuigcerver/pytorch-baidu-ctc",

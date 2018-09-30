@@ -1,7 +1,7 @@
 import logging
-import torch
 
 import _torch_baidu_ctc
+import torch
 
 _logger = logging.getLogger(__name__)
 
@@ -9,7 +9,8 @@ _logger = logging.getLogger(__name__)
 def _assert_no_grad(tensor):
     assert not tensor.requires_grad, (
         "gradients only computed for acts - please mark other tensors as "
-        "not requiring gradients")
+        "not requiring gradients"
+    )
 
 
 _double_types = [torch.DoubleTensor]
@@ -25,22 +26,23 @@ _supported_types = tuple(_supported_types)
 class _CTC(torch.autograd.Function):
     @staticmethod
     def forward(ctx, acts, labels, acts_lens, labels_lens, blank=0):
-        assert isinstance(acts, _supported_types), (
-            "Unsupported tensor type {!r}".format(acts.type()))
+        assert isinstance(
+            acts, _supported_types
+        ), "Unsupported tensor type {!r}".format(acts.type())
         acts = acts.contiguous()
         labels = labels.contiguous()
         acts_lens = acts_lens.contiguous()
         labels_lens = labels_lens.contiguous()
 
         if isinstance(acts, _double_types):
-            _logger.debug('Tensor converted to float in ctc_loss')
+            _logger.debug("Tensor converted to float in ctc_loss")
 
         costs, ctx.grads = _torch_baidu_ctc.ctc_loss(
             x=acts.float(),
             y=labels.int(),
             xs=acts_lens.int(),
             ys=labels_lens.int(),
-            blank_label=blank
+            blank_label=blank,
         )
 
         # Convert to the same type/device as the input
@@ -58,13 +60,13 @@ class _CTC(torch.autograd.Function):
 
 
 def ctc_loss(
-        acts,  # type: torch.FloatTensor
-        labels,  # type: torch.LongTensor
-        acts_lens,  # type: torch.LongTensor
-        labels_lens,  # type: torch.LongTensor
-        average_frames=False,  # type: bool
-        reduction=None,  # type: Optional[AnyStr]
-        blank=0,  # type: int
+    acts,  # type: torch.FloatTensor
+    labels,  # type: torch.LongTensor
+    acts_lens,  # type: torch.LongTensor
+    labels_lens,  # type: torch.LongTensor
+    average_frames=False,  # type: bool
+    reduction=None,  # type: Optional[AnyStr]
+    blank=0,  # type: int
 ):
     """The Connectionist Temporal Classification loss.
 
@@ -93,7 +95,7 @@ def ctc_loss(
     """
     # type: (...) -> torch.Tensor
     assert average_frames is None or isinstance(average_frames, bool)
-    assert reduction is None or reduction in ('none', 'mean', 'sum')
+    assert reduction is None or reduction in ("none", "mean", "sum")
     assert isinstance(blank, int)
 
     _assert_no_grad(labels)
@@ -129,9 +131,10 @@ class CTCLoss(torch.nn.Module):
       blank (int, optional): label used to represent the CTC blank symbol.
         Default: 0.
     """
+
     def __init__(self, average_frames=None, reduction=None, blank=0):
         assert average_frames is None or isinstance(average_frames, bool)
-        assert reduction is None or reduction in ('none', 'mean', 'sum')
+        assert reduction is None or reduction in ("none", "mean", "sum")
         assert isinstance(blank, int)
         super(CTCLoss, self).__init__()
         self.blank = blank
