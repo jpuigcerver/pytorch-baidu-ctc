@@ -86,7 +86,7 @@ pip install torch-baidu-ctc
 ### From GitHub
 
 ```bash
-git clone https://github.com/jpuigcerver/pytorch-baidu-ctc.git
+git clone --recursive https://github.com/jpuigcerver/pytorch-baidu-ctc.git
 cd pytorch-baidu-ctc
 python setup.py build
 python setup.py install
