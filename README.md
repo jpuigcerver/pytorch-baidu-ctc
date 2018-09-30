@@ -1,2 +1,2 @@
-# pytorch-baidu-ctc
+# torch-baidu-ctc
 Pytorch binding for Baidu Warp-CTC

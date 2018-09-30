@@ -1,0 +1,3 @@
+[submodule "third-party/warp-ctc"]
+	path = third-party/warp-ctc
+	url = https://github.com/baidu-research/warp-ctc.git

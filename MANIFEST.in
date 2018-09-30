@@ -1,0 +1,3 @@
+include README.md src/binding.cc
+recursive-include third-party/src *.cu *.cpp
+recursive-include third-party/include *.h
