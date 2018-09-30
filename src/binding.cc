@@ -7,10 +7,13 @@
 #include <torch/torch.h>
 #include <ctc.h>
 
-#include <ATen/Context.h>
 #include <ATen/CPUGeneral.h>
 #include <ATen/Device.h>
+
+#ifdef WITH_CUDA
+#include <ATen/Context.h>
 #include <ATen/DeviceGuard.h>
+#endif
 
 
 #define CHECK_CONTIGUOUS(x)                                       \
@@ -91,10 +94,14 @@ std::tuple<at::Tensor, at::Tensor> ctc_loss(
     ctc_opts.loc = CTC_CPU;
     ctc_opts.num_threads = std::max<unsigned int>(at::get_num_threads(), 0);
   } else {
+#ifdef WITH_CUDA
     ctc_opts.loc = CTC_GPU;
     const auto index = x.device().index();
     ctc_opts.stream =
         at::globalContext().getCurrentCUDAStreamOnDevice(index).stream();
+#else
+    AT_ERROR("ctc_loss was not compiled with CUDA support");
+#endif
   }
 
   // Allocate workspace memory
@@ -109,7 +116,9 @@ std::tuple<at::Tensor, at::Tensor> ctc_loss(
   at::Tensor workspace =
       at::zeros({static_cast<int64_t>(workspace_size * 10)}, workspace_opts);
 
+#ifdef WITH_CUDA
   at::DeviceGuard device_guard(x.device());
+#endif
   CHECK_WARP_CTC_CALL(
       compute_ctc_loss(
           x.data<float>(),
