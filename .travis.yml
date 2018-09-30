@@ -25,7 +25,7 @@ before_install:
   # Upgrade PIP to latest version, in order to support --progres-bar
   - pip install -U pip
   # Manually install torch, and pybind11 since they are required in the setup
-  - "./travis/install_pytorch.sh"
+  - pip install torch==0.4.1 --progress-bar off
   - pip install pybind11 --progress-bar off
 
 install:
