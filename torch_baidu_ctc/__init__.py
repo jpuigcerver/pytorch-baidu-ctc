@@ -1,7 +1,7 @@
 import logging
 
+import torch  # Note: Import torch first!
 import _torch_baidu_ctc
-import torch
 
 _logger = logging.getLogger(__name__)
 

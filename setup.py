@@ -3,7 +3,6 @@ import os
 import sys
 
 import torch
-import torch
 from setuptools import setup, find_packages
 from torch.utils.cpp_extension import BuildExtension, CppExtension, CUDAExtension
 
@@ -29,8 +28,6 @@ if torch.cuda.is_available():
         "third-party/warp-ctc/src/ctc_entrypoint.cu",
         "third-party/warp-ctc/src/reduce.cu",
     ]
-    extra_compile_args["cxx"].append("-DWITH_CUDA")
-    extra_compile_args["nvcc"].append("-DWITH_CUDA")
 
     Extension = CUDAExtension
 else:
