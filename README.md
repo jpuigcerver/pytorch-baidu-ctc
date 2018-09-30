@@ -1,6 +1,6 @@
 # torch-baidu-ctc
 
-[![Build Status](https://travis-ci.com/jpuigcerver/pytorch-baidu-ctc.svg?branch=master)](https://travis-ci.com/jpuigcerver/pytorch-baidu-ctc)
+[![Build Status](https://travis-ci.org/jpuigcerver/pytorch-baidu-ctc.svg?branch=master)](https://travis-ci.org/jpuigcerver/pytorch-baidu-ctc)
 
 Pytorch bindings for Baidu's Warp-CTC. These bindings were inspired by
 [SeanNaren's](https://github.com/SeanNaren/warp-ctc) but these include some bug fixes,
