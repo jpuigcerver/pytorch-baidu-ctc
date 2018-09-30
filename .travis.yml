@@ -1,6 +1,5 @@
 dist: trusty
 sudo: false
-
 language: python
 
 os:
@@ -15,9 +14,9 @@ addons:
       - g++-4.9
 
 python:
-  - "2.7"
-  - "3.5"
-  - "3.6"
+  - '2.7'
+  - '3.5'
+  - '3.6'
 
 env:
   - CC=gcc-4.9 CXX=g++-4.9
@@ -26,7 +25,7 @@ before_install:
   # Upgrade PIP to latest version, in order to support --progres-bar
   - pip install -U pip
   # Manually install torch, and pybind11 since they are required in the setup
-  - ./travis/install_pytorch.sh
+  - "./travis/install_pytorch.sh"
   - pip install pybind11 --progress-bar off
 
 install:
@@ -39,3 +38,12 @@ notifications:
   email:
     on_success: change
     on_failure: always
+
+deploy:
+  provider: pypi
+  user: joapuipe
+  password:
+    secure: Eg2bJZQIh+XPVm6eObMiNu+YtgrwHlNQzddnhVBGBkF9E7WZlPHt6gvDsYkVVjrJjjH78LLWDtc5UZoCcyA2+HVIpr9Xpt3jNAvnVEf4N6vP5VuCCsw4foGbjHe9GLc60KNSe9Sx7Sd7tMtoW6Mph5JNbbUY3SThLvQ1mI/A38SldzIWjO8ndaw5YOp097I+eF1pAPczB8apYFlBCmbqiujs2yE1phcz19/sgn6nYZBooUGP3YjvtveLXyBKbMnjJ3ERUOBFBreBn6MCCmQxyHkoDXqJEbtAZ9KFJ0+3f7xUeLzWsWJREHKQWO4qzqzJT+6M8UAx6zq23xjDWdWmCek58AgIjRzG2YjibbnSE1OXKQduNdSR2DDfQP1nRtLooYjIzyz48LDAv2E2lUqx/0KkHonNk3vyIsDRR8NOYw+2kiIX1SJSH/Q/OW3pSuoO1/wIlgLRG70mGuOS3H3ok1JNGLyzpHJobTzzFFFJ8zPpGTgpTibbYcuTsJXLBIZO8xSHSTEG5jSCqtu8LrdIMqfPhwrfJxLEXBVvgah1eE30yOmOsbwNCfhLM31ebFWatbqCjlW4R9MG/2csYbamJp16ghd0NkGsSnkuxyvVG2h1qlutcPTCihOg+fReuZdo3/oFzhxiHfRsolE/scsHNGqEoS9xG+oywK5d0pv2CyM=
+  distributions: "sdist"
+  on:
+    tags: true
