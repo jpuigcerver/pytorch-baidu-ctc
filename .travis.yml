@@ -1,3 +1,6 @@
+dist: trusty
+sudo: false
+
 language: python
 
 os:
@@ -15,11 +18,31 @@ python:
   - "2.7"
   - "3.5"
   - "3.6"
-  - "3.7"
 
 env:
-  global:
-    - CC=gcc-4.9 CXX=g++-4.9
+  - CC=gcc-4.9 CXX=g++-4.9
+
+# Add tests with additional compilers
+matrix:
+  include:
+      - python: 3.6
+        addons:
+          apt:
+            sources:
+              - ubuntu-toolchain-r-test
+            packages:
+              - gcc-5
+              - g++-5
+        env: CC=gcc-5 CXX=g++-5
+      - python: 3.6
+        addons:
+          apt:
+            sources:
+              - ubuntu-toolchain-r-test
+            packages:
+              - gcc-5
+              - g++-5
+        env: CC=gcc-6 CXX=g++-6
 
 before_install:
   # Upgrade PIP to latest version, in order to support --progres-bar

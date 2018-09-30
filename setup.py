@@ -1,4 +1,4 @@
-# build.py
+import io
 import os
 import sys
 import torch
@@ -44,7 +44,9 @@ else:
 setup(
     name="torch-baidu-ctc",
     version="0.1",
-    description="Pytorch binding for Baidu Warp-CTC",
+    description="PyTorch binding for Baidu Warp-CTC",
+    long_description=io.open("README.md", "r").read(),
+    long_description_content_type="text/markdown",
     url="https://github.com/jpuigcerver/pytorch-baidu-ctc",
     author="Joan Puigcerver",
     author_email="joapuipe@gmail.com",
@@ -59,6 +61,24 @@ setup(
         )
     ],
     cmdclass={"build_ext": BuildExtension},
+    classifiers=[
+        "Development Status :: 4 - Beta",
+        "Intended Audience :: Developers",
+        "Intended Audience :: Education",
+        "Intended Audience :: Science/Research",
+        "License :: OSI Approved :: MIT License",
+        "Programming Language :: Python :: 2",
+        "Programming Language :: Python :: 2.7",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.5",
+        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
+        "Topic :: Scientific/Engineering",
+        "Topic :: Scientific/Engineering :: Artificial Intelligence",
+        "Topic :: Software Development",
+        "Topic :: Software Development :: Libraries",
+        "Topic :: Software Development :: Libraries :: Python Modules",
+    ],
     setup_requires=["pybind11", "torch>=0.4.1"],
     install_requires=["pybind11", "torch>=0.4.1"],
 )
