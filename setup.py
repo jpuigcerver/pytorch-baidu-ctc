@@ -38,7 +38,7 @@ else:
 
 setup(
     name="torch-baidu-ctc",
-    version="0.1",
+    version="0.1.1",
     description="PyTorch bindings for Baidu Warp-CTC",
     long_description=io.open("README.md", "r").read(),
     long_description_content_type="text/markdown",
@@ -49,7 +49,7 @@ setup(
     packages=find_packages(),
     ext_modules=[
         Extension(
-            name="_torch_baidu_ctc",
+            name="torch_baidu_ctc._C",
             sources=sources,
             include_dirs=include_dirs,
             extra_compile_args=extra_compile_args,
