@@ -50,7 +50,7 @@ for py in cp27-cp27mu cp35-cp35m cp36-cp36m cp37-cp37m; do
 done;
 
 set +x;
-ODIR="/host/tmp/torch_baidu_ctc/whl/cpu";
+ODIR="/host/tmp/pytorch_baidu_ctc/whl/cpu";
 mkdir -p "$ODIR";
 cp /tmp/src/dist/*.whl "$ODIR/";
 echo "================================================================";
