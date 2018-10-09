@@ -1,5 +1,6 @@
 import io
 import os
+import re
 import sys
 
 import torch
@@ -15,6 +16,34 @@ CC = os.getenv("CC", None)
 if CC is not None:
     extra_compile_args["nvcc"].append("-ccbin=" + CC)
 
+
+def get_cuda_compile_archs(nvcc_flags=None):
+    """Get the target CUDA architectures from CUDA_ARCH_LIST env variable"""
+    if nvcc_flags is None:
+        nvcc_flags = []
+
+    CUDA_ARCH_LIST = os.getenv("CUDA_ARCH_LIST", None)
+    if CUDA_ARCH_LIST is not None:
+        for arch in CUDA_ARCH_LIST.split(";"):
+            m = re.match(r"^([0-9.]+)(?:\(([0-9.]+)\))?(\+PTX)?$", arch)
+            assert m, "Wrong architecture list: %s" % CUDA_ARCH_LIST
+            com_arch = m.group(1).replace(".", "")
+            cod_arch = m.group(2).replace(".", "") if m.group(2) else com_arch
+            ptx = True if m.group(3) else False
+            nvcc_flags.extend(
+                ["-gencode", "arch=compute_{},code=sm_{}".format(com_arch, cod_arch)]
+            )
+            if ptx:
+                nvcc_flags.extend(
+                    [
+                        "-gencode",
+                        "arch=compute_{},code=compute_{}".format(com_arch, cod_arch),
+                    ]
+                )
+
+    return nvcc_flags
+
+
 include_dirs = [
     "{}/third-party/warp-ctc/include".format(
         os.path.dirname(os.path.realpath(__file__))
@@ -28,11 +57,10 @@ if torch.cuda.is_available():
         "third-party/warp-ctc/src/ctc_entrypoint.cu",
         "third-party/warp-ctc/src/reduce.cu",
     ]
-
+    extra_compile_args["nvcc"].extend(get_cuda_compile_archs())
     Extension = CUDAExtension
 else:
     sources += ["third-party/warp-ctc/src/ctc_entrypoint.cpp"]
-
     Extension = CppExtension
 
 
