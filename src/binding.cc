@@ -4,7 +4,7 @@
 #include <sstream>
 #include <string>
 
-#include <torch/torch.h>
+#include <torch/extension.h>
 #include <ctc.h>
 
 #include <ATen/Context.h>
@@ -12,17 +12,21 @@
 #include <ATen/Device.h>
 #include <ATen/DeviceGuard.h>
 
+#ifdef WITH_CUDA
+#include <THC/THC.h>
+#endif
 
-#define CHECK_CONTIGUOUS(x)                                       \
+
+#define CHECK_CONTIGUOUS(x)                                     \
   AT_CHECK((x).is_contiguous(), #x " must be contiguous")
 
 #define CHECK_CPU(x)                                            \
-  AT_CHECK((x).device().type() == at::Device::Type::CPU,        \
+  AT_CHECK((x).device().type() == c10::Device::Type::CPU,       \
            #x " must be located in the CPU")
 
 #define CHECK_CPU_OR_CUDA(x)                                    \
-  AT_CHECK(((x).device().type() == at::Device::Type::CPU ||     \
-            (x).device().type() == at::Device::Type::CUDA),     \
+  AT_CHECK(((x).device().type() == c10::Device::Type::CPU ||    \
+            (x).device().type() == c10::Device::Type::CUDA),    \
            #x " must be located in the CPU or a CUDA device")
 
 #define CHECK_FLOAT(x)                                                  \
@@ -87,14 +91,17 @@ std::tuple<at::Tensor, at::Tensor> ctc_loss(
   ctcOptions ctc_opts;
   memset(&ctc_opts, 0, sizeof(ctcOptions));
   ctc_opts.blank_label = blank_label;
-  if (x.device().type() == at::Device::Type::CPU) {
+  if (x.device().type() == c10::Device::Type::CPU) {
     ctc_opts.loc = CTC_CPU;
     ctc_opts.num_threads = std::max<unsigned int>(at::get_num_threads(), 0);
-  } else {
+#ifdef WITH_CUDA
+  } else if (x.device().type() == c10::Device::Type::CUDA) {
     ctc_opts.loc = CTC_GPU;
-    const auto index = x.device().index();
     ctc_opts.stream =
-        at::globalContext().getCurrentCUDAStreamOnDevice(index).stream();
+        THCState_getCurrentStream(at::globalContext().getTHCState());
+#endif
+  } else {
+    AT_ERROR("ctc_loss not implemented for the given device type");
   }
 
   // Allocate workspace memory
@@ -105,11 +112,11 @@ std::tuple<at::Tensor, at::Tensor> ctc_loss(
           &workspace_size));
 
   at::TensorOptions workspace_opts(x.device());
-  workspace_opts.dtype(at::ScalarType::Byte);
+  workspace_opts = workspace_opts.dtype(at::ScalarType::Byte);
   at::Tensor workspace =
       at::zeros({static_cast<int64_t>(workspace_size * 10)}, workspace_opts);
 
-  at::DeviceGuard device_guard(x.device());
+  c10::DeviceGuard device_guard(x.device());
   CHECK_WARP_CTC_CALL(
       compute_ctc_loss(
           x.data<float>(),

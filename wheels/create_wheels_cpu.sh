@@ -52,7 +52,13 @@ done;
 set +x;
 ODIR="/host/tmp/pytorch_baidu_ctc/whl/cpu";
 mkdir -p "$ODIR";
-cp /tmp/src/dist/*.whl "$ODIR/";
+readarray -t wheels < <(find /tmp/src/dist -name "*.whl");
+for whl in "${wheels[@]}"; do
+  whl_name="$(basename "$whl")";
+  whl_name="${whl_name/-linux/-manylinux1}";
+  cp "$whl" "${ODIR}/${whl_name}";
+done;
+
 echo "================================================================";
-printf "=== %-56s ===\n" "Copied wheels to ${ODIR:5}";
+printf "=== %-56s ===\n" "Copied ${#wheels[@]} wheels to ${ODIR:5}";
 echo "================================================================";

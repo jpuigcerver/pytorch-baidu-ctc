@@ -1,5 +1,5 @@
-dist: trusty
-sudo: false
+dist: xenial
+sudo: true
 language: python
 
 os:
@@ -14,9 +14,10 @@ addons:
       - g++-4.9
 
 python:
-  - '2.7'
-  - '3.5'
-  - '3.6'
+  - 2.7
+  - 3.5
+  - 3.6
+  - 3.7
 
 env:
   - CC=gcc-4.9 CXX=g++-4.9
@@ -25,7 +26,7 @@ before_install:
   # Upgrade PIP to latest version, in order to support --progres-bar
   - pip install -U pip
   # Manually install torch, and pybind11 since they are required in the setup
-  - pip install torch==0.4.1 --progress-bar off
+  - pip install torch==1.0.0 --progress-bar off
   - pip install pybind11 --progress-bar off
 
 install:

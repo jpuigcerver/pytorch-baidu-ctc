@@ -10,9 +10,9 @@ SOURCE_DIR=$(cd $SDIR/.. && pwd);
 
 if [ ! -f /.dockerenv ]; then
   DOCKER_IMAGES=(
-    soumith/manylinux-cuda80
-    soumith/manylinux-cuda90
-    soumith/manylinux-cuda92
+#    soumith/manylinux-cuda80
+#    soumith/manylinux-cuda90
+    soumith/manylinux-cuda100
   );
   for image in "${DOCKER_IMAGES[@]}"; do
     docker run --runtime=nvidia --rm --log-driver none \
@@ -61,7 +61,13 @@ wheels/fix_deps.sh \
   "libcudart.so.${CUDA_VERSION}" \
   "/usr/local/cuda-${CUDA_VERSION}/lib64/libcudart.so.${CUDA_VERSION}";
 
-rm -rf /opt/rh /usr/local/cuda*;
+# Remove CUDA, since all dependencies should be included.
+# TODO: pip package of PyTorch 1.0.0 for CUDA 10 is not well built, we
+# need CUDA installed!
+if [ ${CUDA_VERSION} != "10.0" ]; then
+  rm -rf /opt/rh /usr/local/cuda*;
+fi;
+
 for py in cp27-cp27mu cp35-cp35m cp36-cp36m cp37-cp37m; do
   echo "=== Testing wheel for $py with CUDA ${CUDA_VERSION} ===";
   export PYTHON=/opt/python/$py/bin/python;
@@ -75,7 +81,13 @@ done;
 set +x;
 ODIR="/host/tmp/pytorch_baidu_ctc/whl/${CUDA_VERSION_S}";
 mkdir -p "$ODIR";
-cp /tmp/src/dist/*.whl "$ODIR/";
+readarray -t wheels < <(find /tmp/src/dist -name "*.whl");
+for whl in "${wheels[@]}"; do
+  whl_name="$(basename "$whl")";
+  whl_name="${whl_name/-linux/-manylinux1}";
+  cp "$whl" "${ODIR}/${whl_name}";
+done;
+
 echo "================================================================";
-printf "=== %-56s ===\n" "Copied wheels to ${ODIR:5}";
+printf "=== %-56s ===\n" "Copied ${#wheels[@]} wheels to ${ODIR:5}";
 echo "================================================================";

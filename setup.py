@@ -57,6 +57,8 @@ if torch.cuda.is_available():
         "third-party/warp-ctc/src/ctc_entrypoint.cu",
         "third-party/warp-ctc/src/reduce.cu",
     ]
+    extra_compile_args["cxx"].append("-DWITH_CUDA")
+    extra_compile_args["nvcc"].append("-DWITH_CUDA")
     extra_compile_args["nvcc"].extend(get_cuda_compile_archs())
     Extension = CUDAExtension
 else:
@@ -66,7 +68,7 @@ else:
 
 setup(
     name="torch-baidu-ctc",
-    version="0.1.1",
+    version="0.2.0",
     description="PyTorch bindings for Baidu Warp-CTC",
     long_description=io.open("README.md", "r").read(),
     long_description_content_type="text/markdown",
@@ -102,6 +104,6 @@ setup(
         "Topic :: Software Development :: Libraries",
         "Topic :: Software Development :: Libraries :: Python Modules",
     ],
-    setup_requires=["pybind11", "torch>=0.4.1"],
-    install_requires=["pybind11", "torch>=0.4.1"],
+    setup_requires=["pybind11", "torch>=1.0.0"],
+    install_requires=["pybind11", "torch>=1.0.0"],
 )
