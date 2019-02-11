@@ -19,14 +19,17 @@ python:
   - 3.6
   - 3.7
 
+# Test all Python version with the latest PyTorch.
 env:
-  - CC=gcc-4.9 CXX=g++-4.9
+  - TORCH_PIP_PACKAGE=torch
 
+# Test other PyTorch/Python combinations.
 matrix:
   include:
-  - env: TORCH_PIP_PACKAGE="torch==1.0.0"
-  - env: TORCH_PIP_PACKAGE="torch==1.0.1"
-  - env: TORCH_PIP_PACKAGE="torch"
+    - python: 3.6
+      env: TORCH_PIP_PACKAGE="torch==1.0.0"
+    - python: 3.6
+      env: TORCH_PIP_PACKAGE="torch==1.0.1"
 
 before_install:
   # Upgrade PIP to latest version, in order to support --progres-bar
@@ -37,6 +40,8 @@ before_install:
   - pip install pybind11 --progress-bar off
 
 install:
+  - export CC=gcc-4.9
+  - export CXX=g++-4.9
   - python setup.py install
 
 script:
