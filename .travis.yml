@@ -22,11 +22,18 @@ python:
 env:
   - CC=gcc-4.9 CXX=g++-4.9
 
+matrix:
+  include:
+  - env: TORCH_PIP_PACKAGE="torch==1.0.0"
+  - env: TORCH_PIP_PACKAGE="torch==1.0.1"
+  - env: TORCH_PIP_PACKAGE="torch"
+
 before_install:
   # Upgrade PIP to latest version, in order to support --progres-bar
   - pip install -U pip
   # Manually install torch, and pybind11 since they are required in the setup
-  - pip install torch==1.0.0 --progress-bar off
+  - pip install numpy --progress-bar off
+  - pip install $TORCH_PIP_PACKAGE --progress-bar off
   - pip install pybind11 --progress-bar off
 
 install:
