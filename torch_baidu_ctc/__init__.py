@@ -107,12 +107,14 @@ def ctc_loss(
     if average_frames:
         costs = costs / acts_lens.to(acts)
 
-    if reduction == "mean":
-        return costs.mean()
-    elif reduction == "none":
+    if reduction == "none":
         return costs
-    else:
+    elif reduction == "mean":
+        return costs.mean()
+    elif reduction == "sum":
         return costs.sum()
+    else:
+        raise ValueError("Unsupported reduction type {!r}".format(reduction))
 
 
 class CTCLoss(torch.nn.Module):

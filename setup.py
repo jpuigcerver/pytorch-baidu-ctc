@@ -44,6 +44,18 @@ def get_cuda_compile_archs(nvcc_flags=None):
     return nvcc_flags
 
 
+def get_requirements():
+    req_file = os.path.join(os.path.dirname(__file__), "requirements.txt")
+    with io.open(req_file, "r", encoding="utf-8") as f:
+        return [line.strip() for line in f]
+
+
+def get_long_description():
+    readme_file = os.path.join(os.path.dirname(__file__), "README.md")
+    with io.open(readme_file, "r", encoding="utf-8") as f:
+        return f.read()
+
+
 include_dirs = [
     "{}/third-party/warp-ctc/include".format(
         os.path.dirname(os.path.realpath(__file__))
@@ -66,11 +78,13 @@ else:
     Extension = CppExtension
 
 
+requirements = get_requirements()
+long_description = get_long_description()
 setup(
     name="torch-baidu-ctc",
-    version="0.2.0",
+    version="0.2.1",
     description="PyTorch bindings for Baidu Warp-CTC",
-    long_description=io.open("README.md", "r").read(),
+    long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/jpuigcerver/pytorch-baidu-ctc",
     author="Joan Puigcerver",
@@ -104,6 +118,6 @@ setup(
         "Topic :: Software Development :: Libraries",
         "Topic :: Software Development :: Libraries :: Python Modules",
     ],
-    setup_requires=["pybind11", "torch>=1.0.0"],
-    install_requires=["pybind11", "torch>=1.0.0"],
+    setup_requires=requirements,
+    install_requires=requirements,
 )

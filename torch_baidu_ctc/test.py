@@ -48,8 +48,8 @@ class CTCLossTest(unittest.TestCase):
             ],
             device=device,
         )
-        paths1 = torch.tensor(xn[0, 1, 1] + xn[1, 1, 2] + xn[2, 1, 1])
-        paths2 = torch.tensor(xn[0, 2, 1] + xn[1, 2, 2] + xn[2, 2, 0] + xn[3, 2, 2])
+        paths1 = xn[0, 1, 1] + xn[1, 1, 2] + xn[2, 1, 1]
+        paths2 = xn[0, 2, 1] + xn[1, 2, 2] + xn[2, 2, 0] + xn[3, 2, 2]
         expected = torch.cat(
             [-torch.logsumexp(paths0, 0).view(1), -paths1.view(1), -paths2.view(1)]
         ).cpu()

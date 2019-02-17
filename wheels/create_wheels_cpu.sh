@@ -23,40 +23,49 @@ set -ex;
 
 # Copy host source directory, to avoid changes in the host.
 cp -r /host/src /tmp/src;
-cd /tmp/src;
 
-# Install PyTorch
-./wheels/install_pytorch_cpu.sh;
-
-cd /tmp/src;
-for py in cp27-cp27mu cp35-cp35m cp36-cp36m cp37-cp37m; do
-  echo "=== Building for $py with CPU-only ==="
-  export PYTHON=/opt/python/$py/bin/python;
-  $PYTHON setup.py clean;
-  $PYTHON setup.py bdist_wheel;
-done;
-
-# No need to fix wheels for CPU
-
-rm -rf /opt/rh;
-for py in cp27-cp27mu cp35-cp35m cp36-cp36m cp37-cp37m; do
-  echo "=== Testing wheel for $py with CPU-only ===";
-  export PYTHON=/opt/python/$py/bin/python;
-  cd /tmp;
-  $PYTHON -m pip uninstall -y torch_baidu_ctc;
-  $PYTHON -m pip install torch_baidu_ctc --no-index -f /tmp/src/dist --no-dependencies -v;
-  $PYTHON -m unittest torch_baidu_ctc.test;
-  cd - 2>&1 > /dev/null;
-done;
-
-set +x;
 ODIR="/host/tmp/pytorch_baidu_ctc/whl/cpu";
 mkdir -p "$ODIR";
-readarray -t wheels < <(find /tmp/src/dist -name "*.whl");
-for whl in "${wheels[@]}"; do
+wheels=();
+for py in cp27-cp27mu cp35-cp35m cp36-cp36m cp37-cp37m; do
+  export PYTHON=/opt/python/$py/bin/python;
+  cd /tmp/src;
+  # Remove previous builds.
+  rm -rf build dist;
+
+  echo "=== Installing requirements for $py with CPU-only ==="
+  ./wheels/install_pytorch_cpu.sh "$py";
+  "$PYTHON" -m pip install \
+	    -r <(sed -r 's|^torch((>=\|>).*)?$||g;/^$/d' requirements.txt);
+
+  echo "=== Building wheel for $py with CPU-only ==="
+  $PYTHON setup.py clean;
+  $PYTHON setup.py bdist_wheel;
+
+  # No need to fix wheel for CPU
+
+  # Move dev libraries to a different location to make sure that tests do
+  # not use them.
+  mv /opt/rh /opt/rh_tmp;
+
+  echo "=== Installing wheel for $py with CPU-only ==="
+  cd /tmp;
+  $PYTHON -m pip uninstall -y torch_baidu_ctc;
+  $PYTHON -m pip install torch_baidu_ctc --no-index -f /tmp/src/dist \
+	  --no-dependencies -v;
+
+  echo "=== Testing wheel for $py with CPU-only ===";
+  $PYTHON -m unittest torch_baidu_ctc.test;
+
+  # Move dev libraries back to their original location after tests.
+  mv /opt/rh_tmp /opt/rh;
+
+  echo "=== Copying wheel for $py with CPU-only to the host ===";
+  readarray -t whl < <(find /tmp/src/dist -name "*.whl");
   whl_name="$(basename "$whl")";
   whl_name="${whl_name/-linux/-manylinux1}";
-  cp "$whl" "${ODIR}/${whl_name}";
+  mv "$whl" "${ODIR}/${whl_name}";
+  wheels+=("${ODIR}/${whl_name}");
 done;
 
 echo "================================================================";

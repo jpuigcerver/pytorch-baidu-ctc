@@ -1,3 +1,3 @@
-include LICENSE README.md src/binding.cc
+include LICENSE README.md src/binding.cc requirements.txt
 recursive-include third-party/warp-ctc/src *.cu *.cpp
 recursive-include third-party/warp-ctc/include *.h *.cuh

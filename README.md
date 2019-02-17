@@ -66,7 +66,7 @@ loss4_2 = ctc(x, y, xs, ys)
 
 - C++11 compiler (tested with GCC 4.9).
 - Python: 2.7, 3.5, 3.6, 3.7 (tested with versions 2.7, 3.5 and 3.6).
-- [PyTorch](http://pytorch.org/) >= 1.0.0 (tested with version 1.0.0).
+- [PyTorch](http://pytorch.org/) >= 1.0.1 (tested with version 1.0.1.post2).
 - For GPU support: [CUDA Toolkit](https://developer.nvidia.com/cuda-zone).
 
 ## Installation
