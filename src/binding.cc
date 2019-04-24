@@ -114,7 +114,7 @@ std::tuple<at::Tensor, at::Tensor> ctc_loss(
   at::TensorOptions workspace_opts(x.device());
   workspace_opts = workspace_opts.dtype(at::ScalarType::Byte);
   at::Tensor workspace =
-      at::zeros({static_cast<int64_t>(workspace_size * 10)}, workspace_opts);
+      at::zeros({static_cast<int64_t>(workspace_size)}, workspace_opts);
 
   c10::DeviceGuard device_guard(x.device());
   CHECK_WARP_CTC_CALL(
