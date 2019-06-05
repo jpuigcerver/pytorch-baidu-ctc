@@ -9,7 +9,7 @@ SOURCE_DIR=$(cd $SDIR/.. && pwd);
 ###########################################
 if [ ! -f /.dockerenv ]; then
   DOCKER_IMAGES=(
-    soumith/manylinux-cuda80
+    # soumith/manylinux-cuda80  # Note: Not supported by PyTorch anymore.
     soumith/manylinux-cuda90
     soumith/manylinux-cuda100
   );

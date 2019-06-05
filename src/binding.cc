@@ -8,9 +8,9 @@
 #include <ctc.h>
 
 #include <ATen/Context.h>
-#include <ATen/CPUGeneral.h>
 #include <ATen/Device.h>
 #include <ATen/DeviceGuard.h>
+#include <ATen/Parallel.h>
 
 #ifdef WITH_CUDA
 #include <THC/THC.h>

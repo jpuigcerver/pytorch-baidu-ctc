@@ -82,7 +82,7 @@ requirements = get_requirements()
 long_description = get_long_description()
 setup(
     name="torch-baidu-ctc",
-    version="0.2.1",
+    version="0.3.0",
     description="PyTorch bindings for Baidu Warp-CTC",
     long_description=long_description,
     long_description_content_type="text/markdown",

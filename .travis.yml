@@ -27,12 +27,12 @@ env:
     - TORCH_PIP_PACKAGE=torch
 
 # Test other PyTorch/Python combinations.
-matrix:
-  include:
-    - python: 3.6
-      env: TORCH_PIP_PACKAGE="torch==1.0.0"
-    - python: 3.6
-      env: TORCH_PIP_PACKAGE="torch==1.0.1"
+# matrix:
+#   include:
+#     - python: 3.6
+#       env: TORCH_PIP_PACKAGE="torch==1.0.0"
+#     - python: 3.6
+#       env: TORCH_PIP_PACKAGE="torch==1.0.1"
 
 before_install:
   # Upgrade PIP to latest version, in order to support --progres-bar
