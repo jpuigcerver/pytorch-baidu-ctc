@@ -107,6 +107,9 @@ def ctc_loss(
     if average_frames:
         costs = costs / acts_lens.to(acts)
 
+    if reduction is None:
+        reduction = "sum"
+
     if reduction == "none":
         return costs
     elif reduction == "mean":
