@@ -51,6 +51,9 @@ for py in cp27-cp27mu cp35-cp35m cp36-cp36m cp37-cp37m; do
   # Remove previous builds.
   rm -rf build dist;
 
+  "$PYTHON" -m pip install -U pip;
+  "$PYTHON" -m pip install -U wheel setuptools;
+
   echo "=== Installing requirements for $py with CUDA ${CUDA_VERSION} ===";
   ./wheels/install_pytorch_cuda.sh "$py";
   "$PYTHON" -m pip install \
